@@ -27,13 +27,13 @@ def query(start, end, machine_list):
 @app.route('/<path:path>')
 def home(path):
 	start = '2016-04-18 12:42:53'
-	end = '2016-04-18 16:43:07'
-	machine_list = [2, 9]
+	end = '2016-04-18 16:55:07'
+	machine_list = range(1,25)
 	outputList = query(start, end, machine_list)
 	for element in outputList:
 		print(element)
 	
-	user = {'nickname': 'Shit'}
+	user = {'nickname': 'CurveGoGo'}
 	return render_template('index.html', 
 			title = path, 
 			user = user, output = outputList )

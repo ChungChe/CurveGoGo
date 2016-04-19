@@ -1,11 +1,40 @@
 <html>
 	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title> Title: {{ title }} </title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
 	</head>
 	<body>
 		<h1> Hello, {{ user.nickname }} ! </h1>
-		{% for element in output %}
-			<h2> {{ element }} </h2>
-		{% endfor %}
+		<div id="algorithmChart" style="height: 250px;"></div>
+		<script>
+            var chartData = [];
+            //for (var chartIdx = 0; chartIdx < betterX.size()V; ++chartIdx) {
+                // {iter: 13, value: 20}, ... 
+			{% for element in output %}
+                var item = {
+                    "datetime" : "{{ element[2] }}", "A": {{ element[1] }}
+                }
+                chartData.push(item);
+			{% endfor %}
+            //}
+            // empty the previous chart
+            $("#algorithmChart").empty();
+            var morrisChart = Morris.Line({
+                element: 'algorithmChart',
+                data: chartData,
+                xkey: 'datetime',
+                parseTime: true,
+                ykeys: ['A'],
+                labels: ['Current']
+            });
+
+		</script>
 	</body>
 </html>
