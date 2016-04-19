@@ -4,5 +4,8 @@
 	</head>
 	<body>
 		<h1> Hello, {{ user.nickname }} ! </h1>
+		{% for element in output %}
+			<h2> {{ element }} </h2>
+		{% endfor %}
 	</body>
 </html>
