@@ -12,12 +12,13 @@
 			End 
 			<input id="date_timepicker_end" type="text" value>
 		</p>
-		<div id="algorithmChart" style="height: 250px;"></div>
+		<div id="algorithmChart" style="height: 400px;"></div>
+		<div id="result"></div>
 	</body>
 		<script src="static/jquery.js"></script>
 		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
 		<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script> 
 		<script src="static/jquery.datetimepicker.full.min.js"></script>
 		<link rel="stylesheet" href="static/jquery.datetimepicker.css">
 	<script>
@@ -31,18 +32,39 @@
             var chartData = [];
 			{% for element in output %}
                 var item = {
-                    "datetime" : "{{ element[2] }}", "A": {{ element[1] }}
+                    "datetime" : "{{ element[2] }}", 
+					"M{{ element[0] }}": {{ element[1] }}
                 }
                 chartData.push(item);
 			{% endfor %}
             $("#algorithmChart").empty();
+			machines = []
+			labels = []
+			for (i = 1; i <= 25; ++i) {
+				machines.push("M"+i)
+				labels.push("Machine"+i)
+			}
+
             var morrisChart = Morris.Line({
                 element: 'algorithmChart',
                 data: chartData,
                 xkey: 'datetime',
                 parseTime: true,
-                ykeys: ['A'],
-                labels: ['Current']
+                ykeys: machines,
+                labels: labels,
+				lineWidth: 1,
+				smooth: true,
+				hoverCallback: function(index, options, content) {
+					for (key in options.data[index]) {
+						if (key != "datatime") {
+							var key_name = key;
+							var value = options.data[index][key_name]
+						}
+					}
+					$("#result").html('<div>'+ key_name + ' : ' + value.toFixed(2) + 'A</div>');
+				},
+				goals: [120],
+				goalStrokeWidth: 5
             });
 
 	</script>
