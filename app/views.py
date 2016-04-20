@@ -22,7 +22,11 @@ def query(start, end, machine_list):
 		if con:
 			con.close()
 		return outputList
-
+@app.context_processor
+def utility_processor():
+	def zfill(value, digit):
+		return str(value).zfill(digit)
+	return dict(zfill=zfill)
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def home(path):

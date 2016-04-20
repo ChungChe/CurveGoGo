@@ -7,10 +7,24 @@
 	<body>
 		<h1> {{ user.nickname }} ! </h1>
 		<p>
-			Start 
+			Start: 
 			<input id="date_timepicker_start" type="text" value>
-			End 
+			End:
 			<input id="date_timepicker_end" type="text" value>
+			<button type="button" class="press_go">GO</button>
+			<p>
+			機器ID:
+			<button type="button" class="select_all_button" onclick="select(true)">全選</button>
+			<button type="button" class="diselect_all_button" onclick="select(false)">全不選</button>
+			<p>
+			{% for row_id in range(0, 5) -%}
+				{% for col_id in range(0, 5) -%}
+					{{ zfill(row_id * 5 +  col_id + 1, 2) }}<input type="checkbox" id="check_machine_{{ row_id * 5 + col_id + 1 }}" checked=true>
+				{% endfor %}
+				<p>
+			{% endfor %}
+			
+
 		</p>
 		<div id="algorithmChart" style="height: 400px;"></div>
 		<div id="result"></div>
@@ -22,6 +36,11 @@
 		<script src="static/jquery.datetimepicker.full.min.js"></script>
 		<link rel="stylesheet" href="static/jquery.datetimepicker.css">
 	<script>
+	function select(flag) {
+		for (i = 1; i <= 25; ++i) {
+			document.getElementById("check_machine_" + i).checked = flag;
+		}
+	}
 	jQuery(function(){
  		jQuery('#date_timepicker_start').datetimepicker();
  		jQuery('#date_timepicker_end').datetimepicker();
@@ -30,7 +49,7 @@
 	</script>
 	<script>
             var chartData = [];
-			{% for element in output %}
+			{% for element in output -%}
                 var item = {
                     "datetime" : "{{ element[2] }}", 
 					"M{{ element[0] }}": {{ element[1] }}
