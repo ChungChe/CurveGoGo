@@ -7,11 +7,12 @@
 	<body>
 		<h1> {{ user.nickname }} ! </h1>
 		<p>
+		<form role="form" class="my_form">
 			Start: 
-			<input id="date_timepicker_start" type="text" value>
+			<input id="date_timepicker_start" name="datetime_start" type="text" value="2016-04-18 16:42:53">
 			End:
-			<input id="date_timepicker_end" type="text" value>
-			<button type="button" class="press_go">GO</button>
+			<input id="date_timepicker_end" name="datetime_end" type="text" value="2016-04-18 16:54:02">
+			<button type="button" id="press_go">GO</button>
 			<p>
 			機器ID:
 			<button type="button" class="select_all_button" onclick="select(true)">全選</button>
@@ -23,7 +24,7 @@
 				{% endfor %}
 				<p>
 			{% endfor %}
-			
+		</form>
 
 		</p>
 		<div id="algorithmChart" style="height: 400px;"></div>
@@ -34,19 +35,9 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script> 
 		<script src="static/jquery.datetimepicker.full.min.js"></script>
+		<script src="static/eldarion-ajax.min.js"></script>
+		<script src="static/gogo.js"></script>
 		<link rel="stylesheet" href="static/jquery.datetimepicker.css">
-	<script>
-	function select(flag) {
-		for (i = 1; i <= 25; ++i) {
-			document.getElementById("check_machine_" + i).checked = flag;
-		}
-	}
-	jQuery(function(){
- 		jQuery('#date_timepicker_start').datetimepicker();
- 		jQuery('#date_timepicker_end').datetimepicker();
-	});
-
-	</script>
 	<script>
             var chartData = [];
 			{% for element in output -%}
@@ -68,6 +59,11 @@
                 element: 'algorithmChart',
                 data: chartData,
                 xkey: 'datetime',
+				dateFormat: function(x) {
+					var d = new Date(x); 
+					console.log(d);
+					return d;
+				},
                 parseTime: true,
                 ykeys: machines,
                 labels: labels,
