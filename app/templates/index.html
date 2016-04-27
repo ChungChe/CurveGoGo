@@ -7,7 +7,7 @@
 	<body>
 		<h1> {{ user.nickname }} ! </h1>
 		<p>
-		<form role="form" class="my_form">
+		<form id="form1" method="post" action="/draw_chart">
 			Start: 
 			<input id="date_timepicker_start" name="datetime_start" type="text" value="2016-04-18 16:42:53">
 			End:
@@ -24,22 +24,48 @@
 				{% endfor %}
 				<p>
 			{% endfor %}
-		</form>
 
 		</p>
 		<div id="algorithmChart" style="height: 400px;"></div>
 		<div id="result"></div>
+		</form>
 	</body>
 		<script src="static/jquery.js"></script>
 		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
 		<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script> 
 		<script src="static/jquery.datetimepicker.full.min.js"></script>
-		<script src="static/eldarion-ajax.min.js"></script>
 		<script src="static/gogo.js"></script>
 		<link rel="stylesheet" href="static/jquery.datetimepicker.css">
+	{% block scripts %}
 	<script>
-            var chartData = [];
+		
+		$('#press_go').click(function() {
+			
+			console.log('get machine list: ' + get_machine_list());
+			
+			$.ajax({
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"datetime_start" : $('#date_timepicker_start').val(),
+					"datetime_end" : $('#date_timepicker_end').val(),
+					"mlist" : get_machine_list()
+					}),
+					dataType: 'json',
+					url: '/draw_chart',
+					success: function(ret) {
+						console.log('JSON post: ' + JSON.stringify(ret));
+					},
+					error: function(error) {
+						console.log('error');
+						console.log(eval(error));
+					}
+			});
+
+			console.log(' index.html draw chart');
+			var chartData = [];
+			
 			{% for element in output -%}
                 var item = {
                     "datetime" : "{{ element[2] }}", 
@@ -60,9 +86,9 @@
                 data: chartData,
                 xkey: 'datetime',
 				dateFormat: function(x) {
-					var d = new Date(x); 
-					console.log(d);
-					return d;
+					//var d = new Date(x); 
+					//console.log(d);
+					//return d;
 				},
                 parseTime: true,
                 ykeys: machines,
@@ -81,6 +107,8 @@
 				goals: [120],
 				goalStrokeWidth: 5
             });
+		});
 
 	</script>
+	{% endblock %}
 </html>

@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, url_for
 import sqlite3 as db
 import db_util
 
 app = Flask(__name__)
+
+app.config['PROPAGATE_EXCEPTIONS'] = True
 
 def query(start, end, machine_list):
 	try:
@@ -31,33 +33,37 @@ def utility_processor():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def home(path):
+	print("home")	
 	start = '2016-04-18 12:42:53'
 	end = '2016-04-18 16:55:07'
 	machine_list = range(1,25)
-	outputList = query(start, end, machine_list)
-	
+#outputList = query(start, end, machine_list)
+	outputList = []	
 	user = {'nickname': 'CurveGoGo'}
 	return render_template('index.html', 
 			title = path, 
 			user = user, output = outputList )
 
-@app.route('/put_data')
-def get_data_from_html():
-	start = request.args.get('datetime_start');
-	print('start: ' + start)
-	end = request.args.get('datetime_end');
-	print('end: ' + end)
-	machine_list = range(1, 25)
+@app.route('/draw_chart', methods = ['POST'])
+def draw_chart():
+	print("post")	
+	json = request.json
+	start = json.get('datetime_start')
+	end = json.get('datetime_end')
+	machine_list = json.get('mlist')
+#start =''
+#	end = ''
+#	machine_list = []
 	outputList = query(start, end, machine_list)
-	print('======')	
-	print(outputList)	
-	user = {'nickname': 'CurveGoGoGo'}
-	return render_template('index.html', 
-			title = "test", 
-			user = user, output = outputList )
+	print('-----------------  53 ')
+	print(outputList)
+	print('-----------------  55 ')
+	user = {'nickname': 'CurveGoGo_1'}
+	print(user)
+	print('-----------------  58 ')
+	data = {"aa" : start, "bb": end, "cc" : machine_list}
+	return jsonify(data)
+#return render_template('index.html', title = 'lalala', user = user, output = outputList)
 
-#print(request.args.getlist('mlist'));
-#print('machine_list: ' + machine_list)
-#	return jsonify({ "status": "success", "code": "200"});
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
