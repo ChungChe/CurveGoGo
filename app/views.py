@@ -50,7 +50,8 @@ def draw_chart():
 	end = my_json.get('datetime_end')
 	machine_list = my_json.get('mlist')
 	outputList = query(start, end, machine_list)
-	my_dict = []	
+	my_dict = []
+	print('total result: ' + str(len(outputList)))
 	for element in outputList:
 		my_dict.append(OrderedDict([("datetime", element[2]), ("M" + str(element[0]), format(float(element[1]), '.2f'))]))
 	return jsonify(data=my_dict)

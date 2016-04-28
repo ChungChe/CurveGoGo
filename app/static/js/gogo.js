@@ -16,6 +16,8 @@ function select(flag) {
 }
 
 $(function(){
-	$('#date_timepicker_start').datetimepicker();
-	$('#date_timepicker_end').datetimepicker();
+	jQuery.datetimepicker.setLocale('zh-TW');
+	$('#date_timepicker_start').datetimepicker({format: 'Y-m-d H:i:s'});
+	$('#date_timepicker_end').datetimepicker({format: 'Y-m-d H:i:s'});
+	
 });
