@@ -6,13 +6,12 @@
 	</head>
 	<body>
 		<h1> {{ user.nickname }} ! </h1>
-		<p>
 		<form id="form1" method="post" action="/draw_chart">
-			Start: 
-			<input id="date_timepicker_start" name="datetime_start" type="text" value="2016-04-18 16:42:53">
-			End:
-			<input id="date_timepicker_end" name="datetime_end" type="text" value="2016-04-18 16:54:02">
-			<button type="button" id="press_go">GO</button>
+					Start: 
+					<input id="date_timepicker_start" name="datetime_start" type="text" value="2016-04-18 16:42:53" maxlength="15" size="15" class="inputs">
+					End:
+					<input id="date_timepicker_end" name="datetime_end" type="text" value="2016-04-18 16:54:02" maxlength="15" size="15" class="inputs">
+				<button type="button" id="press_go">GO</button>
 			<p>
 			機器ID:
 			<button type="button" class="select_all_button" onclick="select(true)">全選</button>
@@ -25,18 +24,18 @@
 				<p>
 			{% endfor %}
 
-		</p>
 		<div id="algorithmChart" style="height: 400px;"></div>
 		<div id="result"></div>
 		</form>
 	</body>
-		<script src="static/jquery.js"></script>
+		<script src="static/js/jquery.js"></script>
 		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
 		<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script> 
-		<script src="static/jquery.datetimepicker.full.min.js"></script>
-		<script src="static/gogo.js"></script>
-		<link rel="stylesheet" href="static/jquery.datetimepicker.css">
+		<script src="static/js/jquery.datetimepicker.full.min.js"></script>
+		<script src="static/js/gogo.js"></script>
+		<link rel="stylesheet" href="static/css/jquery.datetimepicker.css">
+		<link rel="stylesheet" href="static/css/textinput.css">
 	{% block scripts %}
 	<script>
 		
