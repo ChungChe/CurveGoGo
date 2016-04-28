@@ -41,8 +41,7 @@
 	<script>
 		
 		$('#press_go').click(function() {
-			
-			console.log('get machine list: ' + get_machine_list());
+		    var machine_list = get_machine_list();	
 			
 			$.ajax({
 				type: 'POST',
@@ -50,63 +49,36 @@
 				data: JSON.stringify({
 					"datetime_start" : $('#date_timepicker_start').val(),
 					"datetime_end" : $('#date_timepicker_end').val(),
-					"mlist" : get_machine_list()
+					"mlist" : machine_list
 					}),
 					dataType: 'json',
 					url: '/draw_chart',
-					success: function(ret) {
-						console.log('JSON post: ' + JSON.stringify(ret));
+					success: function(chartData) {
+						$("#algorithmChart").empty();
+						machines = []
+						labels = []
+						machine_list.forEach(function(m_id) {
+							machines.push("M" + m_id);
+							labels.push("M" + m_id);
+						});
+						var morrisChart = Morris.Line({
+							element: 'algorithmChart',
+							data: chartData['data'],
+							xkey: 'datetime',
+							parseTime: true,
+							ykeys: machines,
+							labels: labels,
+							lineWidth: 1,
+							smooth: true,
+							goals: [120],
+							goalStrokeWidth: 5
+						});
 					},
 					error: function(error) {
 						console.log('error');
 						console.log(eval(error));
 					}
 			});
-
-			console.log(' index.html draw chart');
-			var chartData = [];
-			
-			{% for element in output -%}
-                var item = {
-                    "datetime" : "{{ element[2] }}", 
-					"M{{ element[0] }}": {{ element[1] }}
-                }
-                chartData.push(item);
-			{% endfor %}
-            $("#algorithmChart").empty();
-			machines = []
-			labels = []
-			for (i = 1; i <= 25; ++i) {
-				machines.push("M"+i)
-				labels.push("Machine"+i)
-			}
-
-            var morrisChart = Morris.Line({
-                element: 'algorithmChart',
-                data: chartData,
-                xkey: 'datetime',
-				dateFormat: function(x) {
-					//var d = new Date(x); 
-					//console.log(d);
-					//return d;
-				},
-                parseTime: true,
-                ykeys: machines,
-                labels: labels,
-				lineWidth: 1,
-				smooth: true,
-				hoverCallback: function(index, options, content) {
-					for (key in options.data[index]) {
-						if (key != "datatime") {
-							var key_name = key;
-							var value = options.data[index][key_name]
-						}
-					}
-					$("#result").html('<div>'+ key_name + ' : ' + value.toFixed(2) + 'A</div>');
-				},
-				goals: [120],
-				goalStrokeWidth: 5
-            });
 		});
 
 	</script>

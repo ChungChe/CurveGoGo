@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request, jsonify, url_for
+from flask import Flask, render_template, request, jsonify 
+from collections import OrderedDict
+import json
 import sqlite3 as db
 import db_util
 
@@ -34,10 +36,6 @@ def utility_processor():
 @app.route('/<path:path>')
 def home(path):
 	print("home")	
-	start = '2016-04-18 12:42:53'
-	end = '2016-04-18 16:55:07'
-	machine_list = range(1,25)
-#outputList = query(start, end, machine_list)
 	outputList = []	
 	user = {'nickname': 'CurveGoGo'}
 	return render_template('index.html', 
@@ -47,23 +45,15 @@ def home(path):
 @app.route('/draw_chart', methods = ['POST'])
 def draw_chart():
 	print("post")	
-	json = request.json
-	start = json.get('datetime_start')
-	end = json.get('datetime_end')
-	machine_list = json.get('mlist')
-#start =''
-#	end = ''
-#	machine_list = []
+	my_json = request.json
+	start = my_json.get('datetime_start')
+	end = my_json.get('datetime_end')
+	machine_list = my_json.get('mlist')
 	outputList = query(start, end, machine_list)
-	print('-----------------  53 ')
-	print(outputList)
-	print('-----------------  55 ')
-	user = {'nickname': 'CurveGoGo_1'}
-	print(user)
-	print('-----------------  58 ')
-	data = {"aa" : start, "bb": end, "cc" : machine_list}
-	return jsonify(data)
-#return render_template('index.html', title = 'lalala', user = user, output = outputList)
+	my_dict = []	
+	for element in outputList:
+		my_dict.append(OrderedDict([("datetime", element[2]), ("M" + str(element[0]), format(float(element[1]), '.2f'))]))
+	return jsonify(data=my_dict)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
