@@ -29,26 +29,117 @@ function set_end_time(value) {
 	$('#date_timepicker_end').val(value);
 }
 
-function get_min_datetime(chartData) {
-	var data_size = chartData['data'].length;
-	var min_time = chartData['data'][0]['datetime'];
+function get_min_datetime(chartData, m) {
+	var data_size = chartData[m].length;
+	var min_time = chartData[m][0]['datetime'];
 	for (i = 1; i < data_size; ++i) {
-		if (chartData['data'][i]['datetime'] < min_time) {
-			min_time = chartData['data'][i]['datetime'];
+		if (chartData[m][i]['datetime'] < min_time) {
+			min_time = chartData[m][i]['datetime'];
 		}
 	}
 	return min_time
 }
 
-function get_max_datetime(chartData) {
-	var data_size = chartData['data'].length;
-	var max_time = chartData['data'][0]['datetime'];
+function get_max_datetime(chartData, m) {
+	var data_size = chartData[m].length;
+	var max_time = chartData[m][0]['datetime'];
 	for (i = 1; i < data_size; ++i) {
-		if (chartData['data'][i]['datetime'] > max_time) {
-			max_time = chartData['data'][i]['datetime'];
+		if (chartData[m][i]['datetime'] > max_time) {
+			max_time = chartData[m][i]['datetime'];
 		}
 	}
 	return max_time
+}
+
+// this method is called when chart is first inited as we listen for "rendered" event
+function zoomChart(chart, chartData) {
+    // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
+    chart.zoomToIndexes(chartData.length - 40, chartData.length - 1);
+}
+
+// generate some random data, quite different range
+function generateChartData(data_from_python) {
+    
+    var chartData = [];
+
+    for (i in data_from_python) {
+        datetimeStr = data_from_python[i].datetime;
+        dateTime = datetimeStr.split(" ")
+        var date = dateTime[0].split("-");
+        var yy = date[0];
+        var mm = date[1]-1;
+        var dd = date[2];
+
+        var time = dateTime[1].split(":");
+        var hh = time[0];
+        var m = time[1];
+        var ss = parseInt(time[2]);
+
+        var newDate = new Date(yy, mm, dd, hh, m, ss);
+        var amp = parseInt(data_from_python[i].value, 10)
+        chartData.push({
+            date: newDate,
+            value: amp
+        });
+    }
+    return chartData;
+}
+
+function update_amchart(data_from_python) {
+	var chartData = generateChartData(data_from_python);
+	//var chartData = (data_from_python);
+	var chart = AmCharts.makeChart("my_amchart", {
+		"type": "serial",
+		"theme": "light",
+		"marginRight": 80,
+		"autoMarginOffset": 20,
+		"marginTop": 7,
+		"dataProvider": chartData,
+		"valueAxes": [{
+			"axisAlpha": 0.2,
+			"dashLength": 1,
+			"position": "left"
+		}],
+		"mouseWheelZoomEnabled": true,
+		"graphs": [{
+			"id": "g1",
+			"balloonText": "[[value]]",
+			"bullet": "round",
+			"bulletBorderAlpha": 1,
+			"bulletColor": "#FFFFFF",
+			"hideBulletsCount": 50,
+			"title": "red line",
+			"valueField": "value",
+			"useLineColorForBulletBorder": true,
+			"balloon":{
+				"drop":true
+			}
+		}],
+		"chartScrollbar": {
+			"autoGridCount": true,
+			"graph": "g1",
+			"scrollbarHeight": 40
+		},
+		"chartCursor": {
+		   "limitToGraph":"g1"
+		},
+		"categoryField": "date",
+		"categoryAxis": {
+            "minPeriod" : "ss",
+			"parseDates": true,
+			"axisColor": "#DADADA",
+			"dashLength": 1,
+			"minorGridEnabled": true
+		},
+		"export": {
+			"enabled": true
+		}
+	});
+
+	chart.addListener("rendered", zoomChart);
+	zoomChart(chart, chartData);
+
+
 }
 
 $(function(){
@@ -63,25 +154,24 @@ $(function(){
 		set_end_time(max_datetime);
 	});
 	$('#press_go').click(function() {
-		var machine_list = get_machine_list();	
+		//var machine_list = get_machine_list();	
 	    	
 		$.ajax({
 			type: 'POST',
 			contentType: 'application/json',
 			data: JSON.stringify({
 				"datetime_start" : $('#date_timepicker_start').val(),
-				"datetime_end" : $('#date_timepicker_end').val(),
-				"mlist" : machine_list
+				"datetime_end" : $('#date_timepicker_end').val()
 				}),
 				dataType: 'json',
 				url: '/draw_chart',
 				success: function(chartData) {
-					var data_size = chartData['data'].length;
-					min_datetime = get_min_datetime(chartData);
-					max_datetime = get_max_datetime(chartData);
+					var data_size = chartData['m1'].length;
+					min_datetime = get_min_datetime(chartData, 'm1');
+					max_datetime = get_max_datetime(chartData, 'm1');
 					
 					$("#result").html("共有" +  data_size + "筆資料，起始時間：" + min_datetime + "，結束時間：" + max_datetime);
-					
+					/*
 					$("#algorithmChart").empty();
 					machines = []
 					labels = []
@@ -101,6 +191,8 @@ $(function(){
 						goals: [120],
 						goalStrokeWidth: 5
 					});
+                    */
+                    update_amchart(chartData['m1']);
 				},
 				error: function(error) {
 					console.log('error');

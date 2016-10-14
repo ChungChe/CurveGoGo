@@ -44,17 +44,31 @@ def home(path):
 
 @app.route('/draw_chart', methods = ['POST'])
 def draw_chart():
-	print("post")	
-	my_json = request.json
-	start = my_json.get('datetime_start')
-	end = my_json.get('datetime_end')
-	machine_list = my_json.get('mlist')
-	outputList = query(start, end, machine_list)
-	my_dict = []
-	print('total result: ' + str(len(outputList)))
-	for element in outputList:
-		my_dict.append(OrderedDict([("datetime", element[2]), ("M" + str(element[0]), format(float(element[1]), '.2f'))]))
-	return jsonify(data=my_dict)
+    print("post")	
+    my_json = request.json
+    start = my_json.get('datetime_start')
+    end = my_json.get('datetime_end')
+    '''
+    machine_list = my_json.get('mlist')
+    outputList = query(start, end, machine_list)
+    print(machine_list)
+    my_dict = []
+    print('total result: ' + str(len(outputList)))
+    for element in outputList:
+        my_dict.append(OrderedDict([("datetime", element[2]), ("M" + str(element[0]), format(float(element[1]), '.2f'))]))
+    '''
+
+    '''
+    # new format
+    datetime: "str"
+    value: "12.09"
+    '''
+    outputList1 = query(start, end, [1])
+    my_dict1 = []
+    for ele in outputList1:
+        converted_datetime = ele[2]
+        my_dict1.append(OrderedDict([("datetime", converted_datetime), ("value", format(float(ele[1]), '.2f'))]))
+    return jsonify(m1=my_dict1)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')

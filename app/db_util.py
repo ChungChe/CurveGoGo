@@ -26,7 +26,7 @@ def create_db(dbName):
 
 def insert(cur, m_id, value):
 	data = [m_id, value]
-	cur.execute("insert into a_curve values (?,?,datetime('now'))", data)
+	cur.execute("insert into a_curve values (?,?,datetime('now', 'localtime'))", data)
 
 def get_data(cur, start, end, machinelist):
 	st = "(" + ",".join(["?"] * len(machinelist)) + ")"

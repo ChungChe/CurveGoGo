@@ -12,7 +12,9 @@
 					<button type="button" id="end_button">結束時間：</button>
 					<input id="date_timepicker_end" name="datetime_end" type="text" value="2200-01-11 23:59:59" class="inputs">
 				<button type="button" id="press_go">GO</button>
-			<p>
+			<!--
+            <p>
+            
 			機器ID:
 			<button type="button" class="select_all_button" onclick="select(true)">全選</button>
 			<button type="button" class="diselect_all_button" onclick="select(false)">全不選</button>
@@ -25,6 +27,8 @@
 			{% endfor %}
 		<div id="result"></div>
 		<div id="algorithmChart" style="height: 400px;"></div>
+            -->
+		<div id="my_amchart" style="height: 500px;"></div>
 		</form>
 	</body>
 		<script src="static/js/jquery.js"></script>
@@ -35,4 +39,26 @@
 		<script src="static/js/gogo.js"></script>
 		<link rel="stylesheet" href="static/css/jquery.datetimepicker.css">
 		<link rel="stylesheet" href="static/css/textinput.css">
+	<!-- Styles -->
+<style>
+#my_amchart {
+	width	: 100%;
+	height	: 500px;
+}																	
+</style>
+
+<!-- Resources -->
+<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+<link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+
+<!-- Chart code -->
+<script>
+
+</script>
+
+<!-- HTML -->
+<div id="chartdiv"></div>
 </html>
