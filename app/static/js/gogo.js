@@ -113,7 +113,8 @@ function update_amchart(data_from_python) {
 			"useLineColorForBulletBorder": true,
 			"balloon":{
 				"drop":true
-			}
+			},
+            "fillAlphas": 0.2
 		}],
 		"chartScrollbar": {
 			"autoGridCount": true,
