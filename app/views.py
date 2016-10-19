@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, jsonify 
+import gevent
+from gevent.wsgi import WSGIServer
 from collections import OrderedDict
 import json
 import sqlite3 as db
@@ -71,4 +73,6 @@ def draw_chart():
     return jsonify(m1=my_dict1)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    http_server = WSGIServer(('', 8001), app)
+    http_server.serve_forever()
+#    app.run(host='0.0.0.0', port=8000)

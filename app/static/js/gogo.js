@@ -54,7 +54,7 @@ function get_max_datetime(chartData, m) {
 // this method is called when chart is first inited as we listen for "rendered" event
 function zoomChart(chart, chartData) {
     // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
-    chart.zoomToIndexes(0, chartData.length - 1);
+    chart.zoomToIndexes(chartData.length - 30000, chartData.length - 1);
 }
 
 // generate some random data, quite different range
