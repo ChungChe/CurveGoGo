@@ -73,6 +73,6 @@ def draw_chart():
     return jsonify(m1=my_dict1)
 
 if __name__ == '__main__':
-    http_server = WSGIServer(('', 8001), app)
+    http_server = WSGIServer(('', 8000), app)
     http_server.serve_forever()
 #    app.run(host='0.0.0.0', port=8000)
