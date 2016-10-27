@@ -122,7 +122,8 @@ function update_amchart(data_from_python) {
 			"scrollbarHeight": 40
 		},
 		"chartCursor": {
-		   "limitToGraph":"g1"
+		   "limitToGraph":"g1",
+           "categoryBalloonDateFormat": "YYYY/MM/DD HH:NN:SS"
 		},
 		"categoryField": "date",
 		"categoryAxis": {
