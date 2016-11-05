@@ -5,28 +5,32 @@ from collections import OrderedDict
 import json
 import sqlite3 as db
 import db_util
+import flask_compress
+import time
 
 app = Flask(__name__)
+flask_compress.Compress(app)
 
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
 def query(start, end, machine_list):
-	try:
-		con = db.connect('curve.db')
-		print('Connect to curve.db')
-		cur = con.cursor()
-		outputList = db_util.get_data(cur, start, end, machine_list)
-	except db.Error, e:
-		if con:
-			con.rollback()
-		print("Error %s" % e.args[0])
-		sys.exit(1)
-	finally:
-		if cur:
-			cur.close()
-		if con:
-			con.close()
-		return outputList
+    
+    try:
+        con = db.connect('/Users/duntex/curve/app/curve.db')
+        print('Connect to curve.db')
+        cur = con.cursor()
+        outputList = db_util.get_data(cur, start, end, machine_list)
+    except db.Error, e:
+        if con:
+            con.rollback()
+        print("Error %s" % e.args[0])
+        sys.exit(1)
+    finally:
+        if cur:
+            cur.close()
+        if con:
+            con.close()
+        return outputList
 
 @app.context_processor
 def utility_processor():
@@ -65,11 +69,24 @@ def draw_chart():
     datetime: "str"
     value: "12.09"
     '''
+    t1 = time.clock()
     outputList1 = query(start, end, [1])
-    my_dict1 = []
+    t2 = time.clock()
+    print("Query takes: {}".format(t2 - t1))
+    
+    t3 = time.clock()
+    names = ['datetime', 'value']
+    data = []
+
     for ele in outputList1:
-        converted_datetime = ele[2]
-        my_dict1.append(OrderedDict([("datetime", converted_datetime), ("value", format(float(ele[1]), '.2f'))]))
+        datetime_data = ele[2]
+        value_data = (format(float(ele[1]), '.2f'))
+        data.append([datetime_data, value_data])
+    
+    my_dict1 = [OrderedDict(zip(names, elem)) for elem in data]
+    t4 = time.clock()
+    print("DB to dict takes: {}".format(t4 - t3))
+
     return jsonify(m1=my_dict1)
 
 if __name__ == '__main__':
