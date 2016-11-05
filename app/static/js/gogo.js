@@ -57,7 +57,7 @@ function zoomChart(chart, chartData) {
     chart.zoomToIndexes(chartData.length - 30000, chartData.length - 1);
 }
 
-// generate some random data, quite different range
+// Convert json to date object and integer
 function generateChartData(data_from_python) {
     
     var chartData = [];
@@ -86,8 +86,12 @@ function generateChartData(data_from_python) {
 }
 
 function update_amchart(data_from_python) {
+    console.time('Generate chart data takes');
 	var chartData = generateChartData(data_from_python);
-	//var chartData = (data_from_python);
+    console.timeEnd('Generate chart data takes');
+
+
+    console.time('Make AMChart takes');
 	var chart = AmCharts.makeChart("my_amchart", {
 		"type": "serial",
 		"theme": "light",
@@ -137,6 +141,7 @@ function update_amchart(data_from_python) {
 			"enabled": true
 		}
 	});
+    console.timeEnd('Make AMChart takes');
 
 	chart.addListener("rendered", zoomChart);
 	zoomChart(chart, chartData);
@@ -168,33 +173,14 @@ $(function(){
 				dataType: 'json',
 				url: '/draw_chart',
 				success: function(chartData) {
-					var data_size = chartData['m1'].length;
-					min_datetime = get_min_datetime(chartData, 'm1');
-					max_datetime = get_max_datetime(chartData, 'm1');
+					var data_size = chartData.length;
 					
+                    var min_datetime = chartData['m1'][0];
+					var max_datetime = chartData['m1'][data_size-1];
 					$("#result").html("共有" +  data_size + "筆資料，起始時間：" + min_datetime + "，結束時間：" + max_datetime);
-					/*
-					$("#algorithmChart").empty();
-					machines = []
-					labels = []
-					machine_list.forEach(function(m_id) {
-						machines.push("M" + m_id);
-						labels.push("M" + m_id);
-					});
-					var morrisChart = Morris.Line({
-						element: 'algorithmChart',
-						data: chartData['data'],
-						xkey: 'datetime',
-						parseTime: true,
-						ykeys: machines,
-						labels: labels,
-						lineWidth: 1,
-						smooth: true,
-						goals: [120],
-						goalStrokeWidth: 5
-					});
-                    */
+                    console.time('Draw chart takes');
                     update_amchart(chartData['m1']);
+                    console.timeEnd('Draw chart takes');
 				},
 				error: function(error) {
 					console.log('error');

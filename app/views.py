@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify 
+from flask import Flask, render_template, request, jsonify, Response, json 
 import gevent
 from gevent.wsgi import WSGIServer
 from collections import OrderedDict
@@ -82,12 +82,16 @@ def draw_chart():
         datetime_data = ele[2]
         value_data = (format(float(ele[1]), '.2f'))
         data.append([datetime_data, value_data])
+
+    ary = [dict(zip(names, ele)) for ele in data]
+    ary1 = {'m1': ary}
     
-    my_dict1 = [OrderedDict(zip(names, elem)) for elem in data]
+    #my_dict1 = [OrderedDict(zip(names, elem)) for elem in data]
     t4 = time.clock()
     print("DB to dict takes: {}".format(t4 - t3))
-
-    return jsonify(m1=my_dict1)
+    #return jsonify(m1=my_dict1)
+    body = json.dumps(ary1)
+    return Response(body, 200, mimetype = "application/json") 
 
 if __name__ == '__main__':
     http_server = WSGIServer(('', 8000), app)
