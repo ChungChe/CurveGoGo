@@ -173,10 +173,14 @@ $(function(){
 				dataType: 'json',
 				url: '/draw_chart',
 				success: function(chartData) {
-					var data_size = chartData.length;
+					var data_size = chartData['m1'].length;
 					
-                    var min_datetime = chartData['m1'][0];
-					var max_datetime = chartData['m1'][data_size-1];
+                    min_datetime = chartData['m1'][0].datetime;
+					max_datetime = chartData['m1'][data_size-1].datetime;
+
+                    console.log(data_size);
+                    console.log(min_datetime);
+                    console.log(max_datetime);
 					$("#result").html("共有" +  data_size + "筆資料，起始時間：" + min_datetime + "，結束時間：" + max_datetime);
                     console.time('Draw chart takes');
                     update_amchart(chartData['m1']);
